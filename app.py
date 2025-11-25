@@ -1,9 +1,6 @@
 import streamlit as st
 import time
 
-# ==========================================
-# 1. إعداد الصفحة
-# ==========================================
 st.set_page_config(
     page_title="AURAK Traffic Control",
     page_icon="🚦",
@@ -11,51 +8,39 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# الألوان
 AURAK_NAVY = "#002D56"
 AURAK_GOLD = "#BFA15F"
 BUTTON_ORANGE = "#FF8C00" 
 BUTTON_HOVER = "#E67E00"
 LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
-# ==========================================
-# 2. تصميم CSS (تحسين القوائم والإشارة)
-# ==========================================
 st.markdown(f"""
     <style>
-    /* الألوان العامة */
     .stApp {{ background-color: #ffffff; color: #000000; }}
     h1, h2, h3, h4, h5, h6, p, span, label, div {{ color: #333333; }}
     
-    /* القائمة الجانبية */
     [data-testid="stSidebar"] {{ background-color: {AURAK_NAVY}; }}
     [data-testid="stSidebar"] * {{ color: white !important; }}
     
-    /* === تعديل القائمة المنسدلة (Selectbox) لتكون بيضاء النص === */
-    /* الصندوق المغلق */
     .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: #004080 !important; /* لون أفتح قليلاً من الخلفية للتميز */
+        background-color: #004080 !important;
         color: white !important;
         border: 1px solid {AURAK_GOLD};
         border-radius: 5px;
     }}
-    /* النص داخل الصندوق */
     .stSelectbox div[data-baseweb="select"] span {{
         color: white !important;
     }}
-    /* القائمة المنبثقة (عند الضغط) */
     ul[data-baseweb="menu"] {{
         background-color: {AURAK_NAVY} !important;
     }}
     li[data-baseweb="option"] {{
         color: white !important;
     }}
-    /* أيقونة السهم */
     .stSelectbox svg {{
         fill: {AURAK_GOLD} !important;
     }}
 
-    /* الأزرار */
     div.stButton > button {{
         background-color: {BUTTON_ORANGE};
         color: white !important;
@@ -77,11 +62,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# 3. محرك الرسم (Smart 2D Render)
-# ==========================================
 def render_game_view(scenario):
-    # إعدادات الخلفية
     bg_color = "#87CEEB" 
     road_fill = "#343a40" 
     line_stroke = "#ffffff"
@@ -89,8 +70,6 @@ def render_game_view(scenario):
     
     traffic_content = ""
     
-    # إعدادات الإشارة (الافتراضي: مطفأ)
-    # نستخدم ألوان غامقة جداً للمطفأ (Dimmed) وألوان فاقعة للمضاء (Bright)
     dim_red = "#330000"
     dim_yellow = "#333300"
     dim_green = "#003300"
@@ -105,7 +84,7 @@ def render_game_view(scenario):
         bg_color = "#b3e5fc"
         grass_color = "#e3f2fd"
         
-        l_red = "#FF0000" # الأحمر مضاء
+        l_red = "#FF0000"
         
         traffic_content = """
             <text x="500" y="200" font-size="80">🚛</text>
@@ -117,7 +96,7 @@ def render_game_view(scenario):
         """
         
     elif scenario == "Scenario B: VIP Convoy":
-        l_red = "#FF0000" # الأحمر مضاء
+        l_red = "#FF0000"
         
         traffic_content = """
             <text x="400" y="200" font-size="90">🚓</text>
@@ -128,8 +107,8 @@ def render_game_view(scenario):
             <text x="310" y="58" font-family="Arial" font-weight="bold" fill="red" font-size="20">🔴 BLOCKED FOR VIP</text>
         """
         
-    else: # Standard
-        l_green = "#00FF00" # الأخضر مضاء
+    else:
+        l_green = "#00FF00"
         
         traffic_content = """
             <text x="50" y="200" font-size="80">🚗</text>
@@ -159,9 +138,6 @@ def render_game_view(scenario):
     """
     return svg.replace("\n", " ").strip()
 
-# ==========================================
-# 4. المنطق (Logic)
-# ==========================================
 def check_ethics(inputs):
     v = []
     if inputs['sH']: v.append("🚫 Rule 1: Severe Harm")
@@ -172,18 +148,13 @@ def check_ethics(inputs):
     if inputs['bEV'] and not inputs['pC']: v.append("🚑 Rule 6: Emergency Blocked")
     return len(v) == 0, v
 
-# ==========================================
-# 5. الواجهة (UI)
-# ==========================================
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/9626/9626620.png", width=80)
     st.title("Control Panel")
     st.markdown("---")
     
-    # القائمة المنسدلة (تم تلوينها بالأبيض في CSS)
     scenario = st.selectbox("Select Scenario", ["Scenario A: Standard", "Scenario B: VIP Convoy", "Scenario C: Icy Road"])
     
-    # القيم الافتراضية
     d = {"sH":0,"mH":0,"pC":0,"vP":0,"hC":1,"dH":0,"hEA":1,"hE":1,"pMH":1,"bEV":0}
     
     if scenario == "Scenario B: VIP Convoy": 
@@ -208,7 +179,6 @@ with st.sidebar:
 
     inputs = {"sH": sH, "mH": mH, "pC": pC, "vP": vP, "hC": hC, "dH": dH, "hEA": hEA, "hE": hE, "pMH": pMH, "bEV": bEV}
 
-# Header
 c1, c2 = st.columns([1, 6])
 with c1:
     st.image(LOGO_URL, width=120)
