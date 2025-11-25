@@ -13,36 +13,21 @@ st.set_page_config(
 
 # الألوان
 AURAK_NAVY = "#002D56"
-BUTTON_ORANGE = "#FF8C00" # البرتقالي المطلوب
+BUTTON_ORANGE = "#FF8C00" 
 BUTTON_HOVER = "#E67E00"
-
 LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
 # ==========================================
-# 2. تصميم CSS (لحل مشكلة النصوص والألوان)
+# 2. تصميم CSS (نصوص سوداء + أزرار برتقالية)
 # ==========================================
 st.markdown(f"""
     <style>
-    /* 1. خلفية بيضاء ونصوص سوداء */
-    .stApp {{
-        background-color: #ffffff;
-        color: #000000;
-    }}
+    .stApp {{ background-color: #ffffff; color: #000000; }}
+    h1, h2, h3, h4, h5, h6, p, span, label, div {{ color: #333333; }}
+    [data-testid="stSidebar"] {{ background-color: {AURAK_NAVY}; }}
+    [data-testid="stSidebar"] * {{ color: white !important; }}
     
-    /* 2. إجبار جميع النصوص والعناوين على الظهور بالأسود */
-    h1, h2, h3, h4, h5, h6, p, span, label, div {{
-        color: #333333;
-    }}
-    
-    /* 3. القائمة الجانبية (أزرق كحلي) */
-    [data-testid="stSidebar"] {{
-        background-color: {AURAK_NAVY};
-    }}
-    [data-testid="stSidebar"] * {{
-        color: white !important;
-    }}
-    
-    /* 4. الأزرار (برتقالي) */
+    /* تصميم الزر البرتقالي */
     div.stButton > button {{
         background-color: {BUTTON_ORANGE};
         color: white !important;
@@ -58,46 +43,33 @@ st.markdown(f"""
         color: white !important;
         border: 2px solid #333;
     }}
-
-    /* 5. تحسين شكل العدادات */
-    [data-testid="stMetricLabel"] {{
-        color: #555 !important;
-    }}
-    [data-testid="stMetricValue"] {{
-        color: #000 !important;
-    }}
+    [data-testid="stMetricLabel"] {{ color: #555 !important; }}
+    [data-testid="stMetricValue"] {{ color: #000 !important; }}
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. محرك الرسم الذكي (Smart 2D Render)
+# 3. محرك الرسم (Smart 2D Render) - تم الإصلاح
 # ==========================================
 def render_game_view(scenario):
-    # الإعدادات الافتراضية (الشارع العادي)
-    bg_color = "#87CEEB" # لون السماء
-    road_fill = "#343a40" # لون الأسفلت الغامق
-    line_stroke = "#ffffff" # خطوط بيضاء
-    border_color = "#333"
+    bg_color = "#87CEEB" 
+    road_fill = "#343a40" 
+    line_stroke = "#ffffff"
     
-    # محتوى الرسم
     traffic_content = ""
     light_top = "#440000"
     light_bot = "#004400"
     
-    # === منطق تغيير شكل الشارع ===
     if scenario == "Scenario C: Icy Road":
-        # تغيير الشارع ليصبح ثلجياً (أزرق فاتح جداً)
-        road_fill = "#dbeff9" 
-        line_stroke = "#2196f3" # الخطوط تصبح زرقاء
-        bg_color = "#b3e5fc" # سماء باردة
-        
+        road_fill = "#dbeff9" # ثلج
+        line_stroke = "#2196f3"
+        bg_color = "#b3e5fc"
         light_top = "#FF0000"
         traffic_content = """
             <text x="500" y="190" font-size="40">❄️</text>
             <text x="200" y="220" font-size="40">❄️</text>
             <text x="550" y="150" font-size="80">🚛</text>
             <text x="250" y="170" font-size="60">🚑</text>
-            <text x="580" y="190" font-size="30">💨</text>
             <rect x="20" y="20" width="280" height="40" fill="white" rx="5" opacity="0.9"/>
             <text x="35" y="48" font-family="Arial" font-weight="bold" fill="orange" font-size="18">⚠️ ICE HAZARD DETECTED</text>
         """
@@ -123,29 +95,23 @@ def render_game_view(scenario):
             <text x="35" y="48" font-family="Arial" font-weight="bold" fill="green" font-size="18">🟢 FLOWING NORMALLY</text>
         """
 
-    # كود SVG النهائي
-    return f"""
-    <svg width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="background-color: {bg_color}; border-radius: 10px; border: 5px solid {AURAK_NAVY}; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-        
-        <rect x="0" y="0" width="800" height="300" fill="{bg_color}" />
-        
-        <rect x="0" y="100" width="800" height="150" fill="#7f8c8d" />
-        
-        <rect x="0" y="120" width="800" height="130" fill="{road_fill}" />
-        
-        <line x1="0" y1="185" x2="800" y2="185" stroke="{line_stroke}" stroke-width="4" stroke-dasharray="30,30"/>
-        
-        <rect x="380" y="120" width="15" height="130" fill="white" />
-        
-        <rect x="410" y="20" width="15" height="100" fill="#2c3e50" />
-        <rect x="400" y="20" width="35" height="80" fill="black" rx="5" stroke="grey" stroke-width="2"/>
-        <circle cx="417" cy="40" r="12" fill="{light_top}" stroke="#333"/>
-        <circle cx="417" cy="80" r="12" fill="{light_bot}" stroke="#333"/>
-        
-        {traffic_content}
-        
+    # هذا هو الإصلاح: إزالة الأسطر الجديدة لتصبح الكود كتلة واحدة
+    svg = f"""
+    <svg width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="background-color: {bg_color}; border-radius: 10px; border: 5px solid {AURAK_NAVY};">
+    <rect x="0" y="0" width="800" height="300" fill="{bg_color}" />
+    <rect x="0" y="100" width="800" height="150" fill="#7f8c8d" />
+    <rect x="0" y="120" width="800" height="130" fill="{road_fill}" />
+    <line x1="0" y1="185" x2="800" y2="185" stroke="{line_stroke}" stroke-width="4" stroke-dasharray="30,30"/>
+    <rect x="380" y="120" width="15" height="130" fill="white" />
+    <rect x="410" y="20" width="15" height="100" fill="#2c3e50" />
+    <rect x="400" y="20" width="35" height="80" fill="black" rx="5" stroke="grey" stroke-width="2"/>
+    <circle cx="417" cy="40" r="12" fill="{light_top}" stroke="#333"/>
+    <circle cx="417" cy="80" r="12" fill="{light_bot}" stroke="#333"/>
+    {traffic_content}
     </svg>
     """
+    # السطر السحري الذي يحل المشكلة:
+    return svg.replace("\n", " ").strip()
 
 # ==========================================
 # 4. المنطق (Logic)
@@ -163,16 +129,12 @@ def check_ethics(inputs):
 # ==========================================
 # 5. الواجهة (UI)
 # ==========================================
-
-# -- Sidebar --
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/9626/9626620.png", width=80)
     st.title("Control Panel")
     st.markdown("---")
-    
     scenario = st.selectbox("📂 Select Scenario", ["Scenario A: Standard", "Scenario B: VIP Convoy", "Scenario C: Icy Road"])
     
-    # Logic Defaults
     d = {"sH":0,"mH":0,"pC":0,"vP":0,"hC":1,"dH":0,"hEA":1,"hE":1,"pMH":1,"bEV":0}
     if scenario == "Scenario B: VIP Convoy": d.update({"sH":1, "mH":1, "bEV":1, "hC":0})
     elif scenario == "Scenario C: Icy Road": d.update({"pC":1, "mH":1, "bEV":1})
@@ -193,7 +155,7 @@ with st.sidebar:
 
     inputs = {"sH": sH, "mH": mH, "pC": pC, "vP": vP, "hC": hC, "dH": dH, "hEA": hEA, "hE": hE, "pMH": pMH, "bEV": bEV}
 
-# -- Main Page --
+# Header
 c1, c2 = st.columns([1, 6])
 with c1:
     st.image(LOGO_URL, width=120)
@@ -203,22 +165,17 @@ with c2:
 
 st.markdown("---")
 
-# Metrics (العدادات - تأكدنا من لونها الأسود)
 m1, m2, m3 = st.columns(3)
 m1.metric("Current Mode", scenario.split(":")[0])
 m2.metric("Emergency Status", "ACTIVE" if bEV else "INACTIVE")
 m3.metric("System Health", "ONLINE")
 
 st.markdown("### 🖥️ Live Traffic Simulation")
-
-# عرض الرسمة (الشارع سيتغير لونه للثلجي تلقائياً)
-st.markdown(render_game_view(scenario), unsafe_allow_html=True)
+st.markdown(render_game_view(scenario), unsafe_allow_html=True) # سيتم العرض بشكل صحيح الآن
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# القسم السفلي (النتائج)
 col1, col2 = st.columns([2, 1])
-
 with col1:
     st.markdown("#### 📝 Scenario Details")
     if scenario == "Scenario A: Standard":
@@ -226,7 +183,6 @@ with col1:
     elif scenario == "Scenario B: VIP Convoy":
         st.warning("VIP Protocol. Intersection blocked. Ambulance held back.")
     else:
-        # هنا غيرنا لون التنبيه ليتناسب مع الثلج
         st.info("❄️ **ICE DETECTED:** Friction coefficient low. Intersection locked to prevent sliding collision.")
 
 with col2:
