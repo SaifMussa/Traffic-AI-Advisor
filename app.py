@@ -16,6 +16,9 @@ AURAK_NAVY = "#002D56"
 AURAK_GOLD = "#BFA15F"
 AURAK_GREY = "#F0F2F6"
 
+# رابط الشعار (تم وضعه هنا لتسهيل التعديل)
+LOGO_URL = "https://www.aurak.ac.ae/assets/images/aurak-logo.svg"
+
 # حقن CSS لتغيير تصميم الموقع بالكامل ليشبه موقع الجامعة
 st.markdown(f"""
     <style>
@@ -89,8 +92,6 @@ def render_traffic_scene(scenario):
     light_color = "green" if scenario == "Scenario A: Standard Flow" else "red"
     
     # تحديد المركبات الظاهرة ومواقعها
-    # SVGs use coordinates (x, y). Road is at y=100 to y=200.
-    
     vehicles_svg = ""
     
     if scenario == "Scenario A: Standard Flow":
@@ -152,61 +153,4 @@ def render_traffic_scene(scenario):
 
 # ==========================================
 # 4. SIDEBAR & CONTROLS
-# ==========================================
-with st.sidebar:
-    st.markdown("### ⚙️ System Control Panel")
-    
-    # اختيار السيناريو
-    scenario_mode = st.selectbox(
-        "Load Traffic Scenario:",
-        ["Scenario A: Standard Flow", "Scenario B: The VIP Convoy", "Scenario C: Icy Road Collision", "Manual Input"]
-    )
-    
-    st.divider()
-    
-    # إعدادات الحساسات (Defaults)
-    # Default: Safe
-    vals = {
-        "sH": False, "mH": False, "pC": False, "vP": False, "hC": True, 
-        "dH": False, "hEA": True, "hE": True, "pMH": True, "bEV": False
-    }
-
-    # تحديث القيم حسب السيناريو تلقائياً
-    if scenario_mode == "Scenario B: The VIP Convoy":
-        vals.update({"sH": True, "mH": True, "bEV": True, "hC": False})
-    elif scenario_mode == "Scenario C: Icy Road Collision":
-        vals.update({"pC": True, "mH": True, "bEV": True})
-
-    # عرض أدوات التحكم (يمكن للمستخدم التعديل عليها)
-    st.markdown("#### 📡 Live Sensor Data")
-    bEV = st.toggle("🚑 Emergency Vehicle Present", value=vals["bEV"])
-    st.caption("Does action block emergency vehicle?")
-    
-    with st.expander("Show Advanced Logic Inputs"):
-        pC = st.checkbox("Prevents Catastrophe", value=vals["pC"])
-        sH = st.checkbox("Causes Severe Harm", value=vals["sH"])
-        mH = st.checkbox("Causes Minor Harm", value=vals["mH"])
-        vP = st.checkbox("Violates Privacy", value=vals["vP"])
-        hC = st.checkbox("Has Consent", value=vals["hC"])
-        hEA = st.checkbox("Has Ethics Approval", value=vals["hEA"])
-        hE = st.checkbox("Has Explanation", value=vals["hE"])
-        dH = st.checkbox("Deceives Human", value=vals["dH"])
-        pMH = st.checkbox("Prevents Minor Harm", value=vals["pMH"])
-
-    # تجميع المدخلات
-    current_action = {
-        "causes_severe_harm": sH, "causes_minor_harm": mH, "prevents_catastrophe": pC,
-        "violates_privacy": vP, "has_consent": hC, "deceives_human": dH,
-        "has_ethics_approval": hEA, "has_explanation": hE, "prevents_minor_harm": pMH,
-        "blocks_emergency_vehicle": bEV
-    }
-
-# ==========================================
-# 5. MAIN CONTENT AREA
-# ==========================================
-
-# --- Header ---
-c1, c2 = st.columns([1, 5])
-with c1:
-    # شعار الجامعة (يمكنك تغييره)
-    st.image("
+# =
