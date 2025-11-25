@@ -149,7 +149,7 @@ def check_ethics(inputs):
     return len(v) == 0, v
 
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/9626/9626620.png", width=80)
+    st.image("https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png", width=80)
     st.title("Control Panel")
     st.markdown("---")
     
@@ -225,3 +225,4 @@ with col2:
 
 st.markdown("---")
 st.caption("© 2025 AURAK Student Project")
+
