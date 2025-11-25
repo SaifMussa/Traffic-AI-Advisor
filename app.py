@@ -13,12 +13,13 @@ st.set_page_config(
 
 # الألوان
 AURAK_NAVY = "#002D56"
+AURAK_GOLD = "#BFA15F"
 BUTTON_ORANGE = "#FF8C00" 
 BUTTON_HOVER = "#E67E00"
 LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
 # ==========================================
-# 2. تصميم CSS (إصلاح القوائم والألوان)
+# 2. تصميم CSS (تحسين القوائم والإشارة)
 # ==========================================
 st.markdown(f"""
     <style>
@@ -28,22 +29,30 @@ st.markdown(f"""
     
     /* القائمة الجانبية */
     [data-testid="stSidebar"] {{ background-color: {AURAK_NAVY}; }}
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{ color: white !important; }}
-    [data-testid="stSidebar"] label {{ color: white !important; font-weight: bold; }}
+    [data-testid="stSidebar"] * {{ color: white !important; }}
     
-    /* إصلاح لون القائمة المنسدلة (Selectbox) - أهم تعديل */
+    /* === تعديل القائمة المنسدلة (Selectbox) لتكون بيضاء النص === */
+    /* الصندوق المغلق */
     .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: white !important;
-        color: black !important;
+        background-color: #004080 !important; /* لون أفتح قليلاً من الخلفية للتميز */
+        color: white !important;
+        border: 1px solid {AURAK_GOLD};
         border-radius: 5px;
     }}
-    .stSelectbox svg {{
-        fill: black !important;
+    /* النص داخل الصندوق */
+    .stSelectbox div[data-baseweb="select"] span {{
+        color: white !important;
     }}
-    
-    /* النصوص داخل القائمة الجانبية */
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {{
-        color: #f0f0f0 !important;
+    /* القائمة المنبثقة (عند الضغط) */
+    ul[data-baseweb="menu"] {{
+        background-color: {AURAK_NAVY} !important;
+    }}
+    li[data-baseweb="option"] {{
+        color: white !important;
+    }}
+    /* أيقونة السهم */
+    .stSelectbox svg {{
+        fill: {AURAK_GOLD} !important;
     }}
 
     /* الأزرار */
@@ -63,7 +72,6 @@ st.markdown(f"""
         border: 2px solid #333;
     }}
     
-    /* النصوص في العدادات */
     [data-testid="stMetricLabel"] {{ color: #555 !important; }}
     [data-testid="stMetricValue"] {{ color: #000 !important; }}
     </style>
@@ -74,21 +82,30 @@ st.markdown(f"""
 # ==========================================
 def render_game_view(scenario):
     # إعدادات الخلفية
-    bg_color = "#87CEEB" # سماء زرقاء
-    road_fill = "#343a40" # أسفلت غامق
+    bg_color = "#87CEEB" 
+    road_fill = "#343a40" 
     line_stroke = "#ffffff"
-    grass_color = "#4CAF50" # لون العشب
+    grass_color = "#4CAF50"
     
     traffic_content = ""
-    light_top = "#440000"
-    light_bot = "#004400"
+    
+    # إعدادات الإشارة (الافتراضي: مطفأ)
+    # نستخدم ألوان غامقة جداً للمطفأ (Dimmed) وألوان فاقعة للمضاء (Bright)
+    dim_red = "#330000"
+    dim_yellow = "#333300"
+    dim_green = "#003300"
+    
+    l_red = dim_red
+    l_yellow = dim_yellow
+    l_green = dim_green
     
     if scenario == "Scenario C: Icy Road":
-        road_fill = "#dbeff9" # شارع ثلجي
+        road_fill = "#dbeff9" 
         line_stroke = "#2196f3"
-        bg_color = "#b3e5fc" # سماء باردة
-        grass_color = "#e3f2fd" # ثلج على الجوانب
-        light_top = "#FF0000"
+        bg_color = "#b3e5fc"
+        grass_color = "#e3f2fd"
+        
+        l_red = "#FF0000" # الأحمر مضاء
         
         traffic_content = """
             <text x="500" y="200" font-size="80">🚛</text>
@@ -100,7 +117,8 @@ def render_game_view(scenario):
         """
         
     elif scenario == "Scenario B: VIP Convoy":
-        light_top = "#FF0000"
+        l_red = "#FF0000" # الأحمر مضاء
+        
         traffic_content = """
             <text x="400" y="200" font-size="90">🚓</text>
             <text x="550" y="200" font-size="90">🚓</text>
@@ -111,7 +129,8 @@ def render_game_view(scenario):
         """
         
     else: # Standard
-        light_bot = "#00FF00"
+        l_green = "#00FF00" # الأخضر مضاء
+        
         traffic_content = """
             <text x="50" y="200" font-size="80">🚗</text>
             <text x="350" y="200" font-size="80">🚙</text>
@@ -127,11 +146,15 @@ def render_game_view(scenario):
     <rect x="0" y="140" width="100%" height="140" fill="{road_fill}" stroke="#555" stroke-width="2"/>
     <line x1="0" y1="210" x2="800" y2="210" stroke="{line_stroke}" stroke-width="5" stroke-dasharray="40,40"/>
     <rect x="380" y="140" width="15" height="140" fill="white" />
-    <rect x="410" y="20" width="15" height="120" fill="#2c3e50" />
-    <rect x="400" y="20" width="35" height="90" fill="black" rx="5" stroke="grey" stroke-width="2"/>
-    <circle cx="417" cy="45" r="13" fill="{light_top}" stroke="#333"/>
-    <circle cx="417" cy="85" r="13" fill="{light_bot}" stroke="#333"/>
+    
+    <rect x="410" y="10" width="12" height="150" fill="#2c3e50" />
+    <rect x="396" y="10" width="40" height="100" fill="#111" rx="8" stroke="#444" stroke-width="2"/>
+    <circle cx="416" cy="30" r="10" fill="{l_red}" stroke="#222" stroke-width="1"/>
+    <circle cx="416" cy="60" r="10" fill="{l_yellow}" stroke="#222" stroke-width="1"/>
+    <circle cx="416" cy="90" r="10" fill="{l_green}" stroke="#222" stroke-width="1"/>
+    
     {traffic_content}
+    
     </svg>
     """
     return svg.replace("\n", " ").strip()
@@ -157,14 +180,13 @@ with st.sidebar:
     st.title("Control Panel")
     st.markdown("---")
     
-    # القائمة المنسدلة (تم إصلاح ألوانها في الـ CSS)
+    # القائمة المنسدلة (تم تلوينها بالأبيض في CSS)
     scenario = st.selectbox("Select Scenario", ["Scenario A: Standard", "Scenario B: VIP Convoy", "Scenario C: Icy Road"])
     
     # القيم الافتراضية
     d = {"sH":0,"mH":0,"pC":0,"vP":0,"hC":1,"dH":0,"hEA":1,"hE":1,"pMH":1,"bEV":0}
     
     if scenario == "Scenario B: VIP Convoy": 
-        # تم الإصلاح: VIP = ضرر + منع إسعاف، لكن لا يوجد انتهاك خصوصية (vP=0) ويوجد تبرير حكومي (hE=1)
         d.update({"sH":1, "mH":1, "bEV":1, "hC":0, "vP":0, "hE":1}) 
         
     elif scenario == "Scenario C: Icy Road": 
