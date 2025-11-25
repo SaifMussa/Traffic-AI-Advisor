@@ -18,16 +18,19 @@ BUTTON_HOVER = "#E67E00"
 LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
 # ==========================================
-# 2. تصميم CSS (نصوص سوداء + أزرار برتقالية)
+# 2. تصميم CSS
 # ==========================================
 st.markdown(f"""
     <style>
+    /* الألوان العامة */
     .stApp {{ background-color: #ffffff; color: #000000; }}
     h1, h2, h3, h4, h5, h6, p, span, label, div {{ color: #333333; }}
+    
+    /* القائمة الجانبية */
     [data-testid="stSidebar"] {{ background-color: {AURAK_NAVY}; }}
     [data-testid="stSidebar"] * {{ color: white !important; }}
     
-    /* تصميم الزر البرتقالي */
+    /* الأزرار */
     div.stButton > button {{
         background-color: {BUTTON_ORANGE};
         color: white !important;
@@ -43,74 +46,92 @@ st.markdown(f"""
         color: white !important;
         border: 2px solid #333;
     }}
+    
+    /* النصوص في العدادات */
     [data-testid="stMetricLabel"] {{ color: #555 !important; }}
     [data-testid="stMetricValue"] {{ color: #000 !important; }}
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. محرك الرسم (Smart 2D Render) - تم الإصلاح
+# 3. محرك الرسم (Smart 2D Render)
 # ==========================================
 def render_game_view(scenario):
-    bg_color = "#87CEEB" 
-    road_fill = "#343a40" 
+    # إعدادات الخلفية
+    bg_color = "#87CEEB" # سماء زرقاء
+    road_fill = "#343a40" # أسفلت غامق
     line_stroke = "#ffffff"
+    grass_color = "#4CAF50" # لون العشب (لجعل الشارع واقعي)
     
     traffic_content = ""
     light_top = "#440000"
     light_bot = "#004400"
     
     if scenario == "Scenario C: Icy Road":
-        road_fill = "#dbeff9" # ثلج
+        road_fill = "#dbeff9" # شارع ثلجي
         line_stroke = "#2196f3"
-        bg_color = "#b3e5fc"
+        bg_color = "#b3e5fc" # سماء باردة
+        grass_color = "#e3f2fd" # ثلج على الجوانب
         light_top = "#FF0000"
+        
+        # السيارات (تم تكبير الحجم وضبط الموقع y)
         traffic_content = """
-            <text x="500" y="190" font-size="40">❄️</text>
-            <text x="200" y="220" font-size="40">❄️</text>
-            <text x="550" y="150" font-size="80">🚛</text>
-            <text x="250" y="170" font-size="60">🚑</text>
-            <rect x="20" y="20" width="280" height="40" fill="white" rx="5" opacity="0.9"/>
-            <text x="35" y="48" font-family="Arial" font-weight="bold" fill="orange" font-size="18">⚠️ ICE HAZARD DETECTED</text>
+            <text x="500" y="200" font-size="80">🚛</text>
+            <text x="250" y="220" font-size="50">❄️</text>
+            <text x="200" y="210" font-size="70">🚑</text>
+            <text x="580" y="200" font-size="40">💨</text>
+            
+            <rect x="250" y="30" width="300" height="40" fill="white" rx="5" stroke="orange" stroke-width="2"/>
+            <text x="290" y="58" font-family="Arial" font-weight="bold" fill="orange" font-size="20">⚠️ ICE HAZARD DETECTED</text>
         """
         
     elif scenario == "Scenario B: VIP Convoy":
         light_top = "#FF0000"
+        # السيارات
         traffic_content = """
-            <text x="450" y="170" font-size="70">🚓</text>
-            <text x="530" y="170" font-size="70">🚓</text>
-            <text x="280" y="170" font-size="60">🚗</text>
-            <text x="150" y="170" font-size="60">🚑</text>
-            <rect x="20" y="20" width="280" height="40" fill="white" rx="5" opacity="0.9"/>
-            <text x="35" y="48" font-family="Arial" font-weight="bold" fill="red" font-size="18">🔴 BLOCKED FOR VIP</text>
+            <text x="400" y="200" font-size="90">🚓</text>
+            <text x="550" y="200" font-size="90">🚓</text>
+            <text x="250" y="200" font-size="80">🚗</text>
+            <text x="100" y="200" font-size="80">🚑</text>
+            
+            <rect x="250" y="30" width="300" height="40" fill="white" rx="5" stroke="red" stroke-width="2"/>
+            <text x="310" y="58" font-family="Arial" font-weight="bold" fill="red" font-size="20">🔴 BLOCKED FOR VIP</text>
         """
         
     else: # Standard
         light_bot = "#00FF00"
         traffic_content = """
-            <text x="50" y="170" font-size="60">🚗</text>
-            <text x="350" y="170" font-size="60">🚙</text>
-            <text x="650" y="170" font-size="60">🚕</text>
-            <rect x="20" y="20" width="280" height="40" fill="white" rx="5" opacity="0.9"/>
-            <text x="35" y="48" font-family="Arial" font-weight="bold" fill="green" font-size="18">🟢 FLOWING NORMALLY</text>
+            <text x="50" y="200" font-size="80">🚗</text>
+            <text x="350" y="200" font-size="80">🚙</text>
+            <text x="650" y="200" font-size="80">🚕</text>
+            
+            <rect x="250" y="30" width="300" height="40" fill="white" rx="5" stroke="green" stroke-width="2"/>
+            <text x="300" y="58" font-family="Arial" font-weight="bold" fill="green" font-size="20">🟢 FLOWING NORMALLY</text>
         """
 
-    # هذا هو الإصلاح: إزالة الأسطر الجديدة لتصبح الكود كتلة واحدة
+    # كود SVG (تم تعديل العرض والارتفاع ليكون مثالياً)
     svg = f"""
-    <svg width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="background-color: {bg_color}; border-radius: 10px; border: 5px solid {AURAK_NAVY};">
-    <rect x="0" y="0" width="800" height="300" fill="{bg_color}" />
-    <rect x="0" y="100" width="800" height="150" fill="#7f8c8d" />
-    <rect x="0" y="120" width="800" height="130" fill="{road_fill}" />
-    <line x1="0" y1="185" x2="800" y2="185" stroke="{line_stroke}" stroke-width="4" stroke-dasharray="30,30"/>
-    <rect x="380" y="120" width="15" height="130" fill="white" />
-    <rect x="410" y="20" width="15" height="100" fill="#2c3e50" />
-    <rect x="400" y="20" width="35" height="80" fill="black" rx="5" stroke="grey" stroke-width="2"/>
-    <circle cx="417" cy="40" r="12" fill="{light_top}" stroke="#333"/>
-    <circle cx="417" cy="80" r="12" fill="{light_bot}" stroke="#333"/>
+    <svg width="100%" height="320" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" style="background-color: {bg_color}; border-radius: 10px; border: 4px solid {AURAK_NAVY};">
+    
+    <rect x="0" y="0" width="800" height="320" fill="{bg_color}" />
+    
+    <rect x="0" y="150" width="800" height="170" fill="{grass_color}" />
+    
+    <rect x="0" y="140" width="800" height="140" fill="{road_fill}" stroke="#555" stroke-width="2"/>
+    
+    <line x1="0" y1="210" x2="800" y2="210" stroke="{line_stroke}" stroke-width="5" stroke-dasharray="40,40"/>
+    
+    <rect x="380" y="140" width="15" height="140" fill="white" />
+    
+    <rect x="410" y="20" width="15" height="120" fill="#2c3e50" />
+    <rect x="400" y="20" width="35" height="90" fill="black" rx="5" stroke="grey" stroke-width="2"/>
+    <circle cx="417" cy="45" r="13" fill="{light_top}" stroke="#333"/>
+    <circle cx="417" cy="85" r="13" fill="{light_bot}" stroke="#333"/>
+    
     {traffic_content}
+    
     </svg>
     """
-    # السطر السحري الذي يحل المشكلة:
     return svg.replace("\n", " ").strip()
 
 # ==========================================
@@ -135,9 +156,16 @@ with st.sidebar:
     st.markdown("---")
     scenario = st.selectbox("📂 Select Scenario", ["Scenario A: Standard", "Scenario B: VIP Convoy", "Scenario C: Icy Road"])
     
+    # الإعدادات الافتراضية الذكية (تم تعديل Privacy ليكون 0 في السيناريو B)
     d = {"sH":0,"mH":0,"pC":0,"vP":0,"hC":1,"dH":0,"hEA":1,"hE":1,"pMH":1,"bEV":0}
-    if scenario == "Scenario B: VIP Convoy": d.update({"sH":1, "mH":1, "bEV":1, "hC":0})
-    elif scenario == "Scenario C: Icy Road": d.update({"pC":1, "mH":1, "bEV":1})
+    
+    if scenario == "Scenario B: VIP Convoy": 
+        # VIP: Severe Harm (maybe), Minor Harm (yes), Emergency Blocked (yes), Privacy (NO - fixed)
+        d.update({"sH":1, "mH":1, "bEV":1, "hC":0, "vP":0}) 
+        
+    elif scenario == "Scenario C: Icy Road": 
+        # Ice: Prevents Catastrophe (yes), Minor Harm (yes), Emergency Blocked (yes)
+        d.update({"pC":1, "mH":1, "bEV":1})
     
     st.markdown("#### 📡 Live Sensors")
     bEV = st.toggle("🚑 Emergency Detected", value=bool(d['bEV']))
@@ -171,7 +199,7 @@ m2.metric("Emergency Status", "ACTIVE" if bEV else "INACTIVE")
 m3.metric("System Health", "ONLINE")
 
 st.markdown("### 🖥️ Live Traffic Simulation")
-st.markdown(render_game_view(scenario), unsafe_allow_html=True) # سيتم العرض بشكل صحيح الآن
+st.markdown(render_game_view(scenario), unsafe_allow_html=True) 
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -181,9 +209,9 @@ with col1:
     if scenario == "Scenario A: Standard":
         st.info("Normal operation. Green lights optimized for flow.")
     elif scenario == "Scenario B: VIP Convoy":
-        st.warning("VIP Protocol. Intersection blocked. Ambulance held back.")
+        st.warning("VIP Protocol initiated. Intersection blocked for government convoy. Ambulance on Hold.")
     else:
-        st.info("❄️ **ICE DETECTED:** Friction coefficient low. Intersection locked to prevent sliding collision.")
+        st.info("❄️ **ICE DETECTED:** Friction coefficient critical. Intersection locked to prevent sliding collision.")
 
 with col2:
     st.markdown("#### ⚖️ AI Decision")
