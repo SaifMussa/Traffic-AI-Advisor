@@ -17,7 +17,7 @@ AURAK_GOLD = "#BFA15F"
 AURAK_GREY = "#F0F2F6"
 
 # رابط الشعار (تم وضعه هنا لتسهيل التعديل)
-LOGO_URL = "https://www.aurak.ac.ae/assets/images/aurak-logo.svg"
+LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
 # حقن CSS لتغيير تصميم الموقع بالكامل ليشبه موقع الجامعة
 st.markdown(f"""
@@ -154,3 +154,4 @@ def render_traffic_scene(scenario):
 # ==========================================
 # 4. SIDEBAR & CONTROLS
 # =
+
