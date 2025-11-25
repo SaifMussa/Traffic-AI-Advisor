@@ -16,7 +16,7 @@ AURAK_NAVY = "#002D56"
 AURAK_GOLD = "#BFA15F"
 AURAK_GREY = "#F0F2F6"
 
-# رابط الشعار (تم وضعه هنا لتسهيل التعديل)
+# رابط الشعار الجديد
 LOGO_URL = "https://aetex.ae/wp-content/uploads/2018/01/Pages-from-aurak-logo-only.png"
 
 # حقن CSS لتغيير تصميم الموقع بالكامل ليشبه موقع الجامعة
@@ -86,7 +86,7 @@ def check_ethics(action):
 # ==========================================
 def render_traffic_scene(scenario):
     """
-    يرسم الشارع والإشارة والسيارات بناءً على السيناريو المختار
+    يرسم الشارع والإشارة والسيارات بناءً على السيناريو المختار باستخدام SVG
     """
     # الألوان والعناصر الافتراضية
     light_color = "green" if scenario == "Scenario A: Standard Flow" else "red"
@@ -153,5 +153,112 @@ def render_traffic_scene(scenario):
 
 # ==========================================
 # 4. SIDEBAR & CONTROLS
-# =
+# ==========================================
+with st.sidebar:
+    st.markdown("### ⚙️ System Control Panel")
+    
+    # اختيار السيناريو
+    scenario_mode = st.selectbox(
+        "Load Traffic Scenario:",
+        ["Scenario A: Standard Flow", "Scenario B: The VIP Convoy", "Scenario C: Icy Road Collision", "Manual Input"]
+    )
+    
+    st.divider()
+    
+    # إعدادات الحساسات (Defaults)
+    vals = {
+        "sH": False, "mH": False, "pC": False, "vP": False, "hC": True, 
+        "dH": False, "hEA": True, "hE": True, "pMH": True, "bEV": False
+    }
 
+    # تحديث القيم حسب السيناريو تلقائياً
+    if scenario_mode == "Scenario B: The VIP Convoy":
+        vals.update({"sH": True, "mH": True, "bEV": True, "hC": False})
+    elif scenario_mode == "Scenario C: Icy Road Collision":
+        vals.update({"pC": True, "mH": True, "bEV": True})
+
+    # عرض أدوات التحكم
+    st.markdown("#### 📡 Live Sensor Data")
+    bEV = st.toggle("🚑 Emergency Vehicle Present", value=vals["bEV"])
+    
+    with st.expander("Show Advanced Logic Inputs"):
+        pC = st.checkbox("Prevents Catastrophe", value=vals["pC"])
+        sH = st.checkbox("Causes Severe Harm", value=vals["sH"])
+        mH = st.checkbox("Causes Minor Harm", value=vals["mH"])
+        vP = st.checkbox("Violates Privacy", value=vals["vP"])
+        hC = st.checkbox("Has Consent", value=vals["hC"])
+        hEA = st.checkbox("Has Ethics Approval", value=vals["hEA"])
+        hE = st.checkbox("Has Explanation", value=vals["hE"])
+        dH = st.checkbox("Deceives Human", value=vals["dH"])
+        pMH = st.checkbox("Prevents Minor Harm", value=vals["pMH"])
+
+    # تجميع المدخلات
+    current_action = {
+        "causes_severe_harm": sH, "causes_minor_harm": mH, "prevents_catastrophe": pC,
+        "violates_privacy": vP, "has_consent": hC, "deceives_human": dH,
+        "has_ethics_approval": hEA, "has_explanation": hE, "prevents_minor_harm": pMH,
+        "blocks_emergency_vehicle": bEV
+    }
+
+# ==========================================
+# 5. MAIN CONTENT AREA
+# ==========================================
+
+# --- Header ---
+c1, c2 = st.columns([1, 5])
+with c1:
+    # عرض الشعار من الرابط الجديد
+    st.image(LOGO_URL, width=120)
+with c2:
+    st.markdown(f"<h1 style='color:{AURAK_NAVY}; margin-bottom:0;'>American University of Ras Al Khaimah</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{AURAK_GOLD}; margin-top:0;'>Department of Computer Science & Engineering</h3>", unsafe_allow_html=True)
+    st.markdown("**Project: AI Ethics Advisor (Traffic Control System)**")
+    # تم إضافة اسمك هنا
+    st.markdown("👨‍🎓 **Developed by: Saif Mussa**")
+
+st.markdown("---")
+st.markdown(f"<h2 style='text-align: center; color: {AURAK_NAVY}'>Intelligent Traffic Control System</h2>", unsafe_allow_html=True)
+
+# --- 2D Simulation Display ---
+st.markdown("### 🚦 Live Intersection View (2D Simulation)")
+svg_html = render_traffic_scene(scenario_mode)
+st.markdown(svg_html, unsafe_allow_html=True)
+
+# --- Analysis Section ---
+col_desc, col_result = st.columns([1, 1])
+
+with col_desc:
+    st.markdown("#### 📝 Scenario Narrative")
+    if scenario_mode == "Scenario A: Standard Flow":
+        st.info("Normal traffic conditions. Optimizing green light duration. No emergency vehicles.")
+    elif scenario_mode == "Scenario B: The VIP Convoy":
+        st.warning("⚠️ VIP Convoy detected. Protocol requires blocking traffic. Ambulance also detected on cross street.")
+    elif scenario_mode == "Scenario C: Icy Road Collision":
+        st.error("🚨 CRITICAL: Black ice & skidding truck detected. Intersection locked to prevent collision.")
+    else:
+        st.markdown("Manual testing mode active.")
+
+with col_result:
+    st.markdown("#### ⚖️ Ethical Verdict")
+    
+    # زر التحليل
+    if st.button("Analyze Decision Logics", type="primary"):
+        with st.spinner("Processing Logical Framework..."):
+            time.sleep(0.8) 
+            
+        is_permissible, violations = check_ethics(current_action)
+        
+        if is_permissible:
+            st.markdown(f"""
+                <div class="success-box">
+                    <h3>✅ ACTION PERMISSIBLE</h3>
+                    <p>The system has approved this action. No ethical violations found.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            st.balloons()
+        else:
+            violations_html = "".join([f"<li>{v}</li>" for v in violations])
+            st.markdown(f"""
+                <div class="error-box">
+                    <h3>⛔ ACTION IMPERMISSIBLE</h3>
+                    <p
